@@ -1,0 +1,4 @@
+com/bsd/oms/process/OrderDetails.class
+com/bsd/oms/domain/Error.class
+com/bsd/oms/process/TaskSummary.class
+com/bsd/oms/domain/Message.class
