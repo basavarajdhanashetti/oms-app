@@ -25,7 +25,9 @@
 
 	<modules>
 		<module>oms-domain</module>
+		<module>oms-entity-domain</module>		
 		<module>oms-rest-app</module>
+		<module>oms-process-app</module>
 		<module>oms-web</module>
 	</modules>
 	<dependencies>

@@ -10,17 +10,6 @@
 	<artifactId>oms-rest-app</artifactId>
 	<name>BSD OMS REST Service Application</name>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.jboss.bom.brms</groupId>
-				<artifactId>jboss-brms-bpmsuite-platform-bom</artifactId>
-				<version>6.4.2.GA-redhat-2</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 
@@ -73,17 +62,11 @@
 			<artifactId>oms-domain</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<!--dependency for KIE Server REST client -->
 		<dependency>
-			<groupId>org.kie.server</groupId>
-			<artifactId>kie-server-client</artifactId>
+			<groupId>com.bsd.oms</groupId>
+			<artifactId>oms-entity-domain</artifactId>
+			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.kie.server</groupId>
-			<artifactId>kie-server-api</artifactId>
-		</dependency>
-
 
 		<!-- dependency for Swagger Configuration -->
 		<dependency>
