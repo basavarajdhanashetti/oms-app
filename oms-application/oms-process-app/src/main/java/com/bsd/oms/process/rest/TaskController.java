@@ -7,6 +7,7 @@ import org.kie.server.api.model.instance.TaskInstance;
 import org.kie.server.api.model.instance.TaskSummary;
 import org.kie.server.client.KieServicesClient;
 import org.kie.server.client.UserTaskServicesClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +47,26 @@ public class TaskController {
 		List<TaskSummary> tasks = taskClient.findTasksAssignedAsPotentialOwner(user, 0, 10);
 		System.out.println("\t######### Tasks: " + tasks);
 		return ResponseEntity.ok(tasks);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	@GetMapping("/users/{user}/tasks/{id}")
+	public ResponseEntity<TaskInstance> getTasksById(@PathVariable String user, @PathVariable long id) {
+		System.out.println("Getting all tasks for user:" + user);
+		KieServicesClient kieServerClient = jbpmConnection.getNewSession(user);
+		UserTaskServicesClient taskClient = kieServerClient.getServicesClient(UserTaskServicesClient.class);
+		// find available tasks
+		TaskInstance instance = taskClient.findTaskById(id);
+		System.out.println("\t######### Tasks: " + instance);
+
+		TaskSummary summary = new TaskSummary();
+
+		BeanUtils.copyProperties(instance, summary);
+
+		return ResponseEntity.ok(instance);
 	}
 
 	/**
@@ -138,6 +159,53 @@ public class TaskController {
 			} else {
 				return ResponseEntity.ok(new Message("NotOk"));
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.ok(new Message("NotOk"));
+		}
+	}
+
+
+	/**
+	 * 
+	 * @return
+	 */
+	@PostMapping("/users/{user}/tasks/{taskId}/save")
+	public ResponseEntity<Message> saveTaskContent(@PathVariable String user, @PathVariable long taskId,
+			@RequestBody Map<String, Object> taskData) {
+		System.out.println("Save task content for user:" + user + " task id:" + taskId);
+		KieServicesClient kieServerClient = jbpmConnection.getNewSession(user);
+		UserTaskServicesClient taskClient = kieServerClient.getServicesClient(UserTaskServicesClient.class);
+
+		TaskInstance taskInstance = taskClient.findTaskById(taskId);
+
+		Map<String, Object> outputData = TaskUtil.getMapperByTask(taskInstance.getName(), taskData);
+		try {
+			if (taskInstance.getStatus().equals("InProgress")) {
+				taskClient.saveTaskContent(propertyConfig.getProcurementContainer(), taskId, outputData);
+				return ResponseEntity.ok(new Message("Ok"));
+			} else {
+				return ResponseEntity.ok(new Message("NotOk"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.ok(new Message("NotOk"));
+		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@GetMapping("/users/{user}/tasks/{taskId}/content")
+	public ResponseEntity<?> getContentTask(@PathVariable String user, @PathVariable long taskId) {
+		System.out.println("Get task content for for user:" + user + " task id:" + taskId);
+		KieServicesClient kieServerClient = jbpmConnection.getNewSession(user);
+		UserTaskServicesClient taskClient = kieServerClient.getServicesClient(UserTaskServicesClient.class);
+
+		try {
+			Map<String, Object> inputData = taskClient.getTaskInputContentByTaskId(propertyConfig.getProcurementContainer(), taskId);
+			return ResponseEntity.ok(inputData);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.ok(new Message("NotOk"));

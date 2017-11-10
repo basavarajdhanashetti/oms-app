@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -11,21 +13,23 @@ import javax.persistence.Table;
 public class Customer {
 
 	@Id
-    @Column(name = "id")
 	@GeneratedValue
     private Long id;
 
-	@Column(name = "name")
 	private String name;
 	
-	@Column(name = "email_id")
     private String emailId;
 	
-	@Column(name = "mobile_no")
     private String mobileNo;
 	
-	@Column(name = "segment")
     private String segment;
+	
+    @Column(name="id_address")
+	private long idAddress;
+	
+	@ManyToOne
+	@JoinColumn(name="id_address", insertable=false, updatable=false)
+	private Address address;
     
     protected Customer() {}
 
@@ -92,6 +96,22 @@ public class Customer {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public long getIdAddress() {
+		return idAddress;
+	}
+
+	public void setIdAddress(long idAddress) {
+		this.idAddress = idAddress;
 	}
 
 }

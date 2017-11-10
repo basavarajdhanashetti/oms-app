@@ -2,6 +2,7 @@ com/bsd/oms/domain/Message.class
 com/bsd/oms/domain/Error.class
 com/bsd/oms/process/Product.class
 com/bsd/oms/process/ApprovalDetails.class
+com/bsd/oms/utils/TaskEnum.class
 com/bsd/oms/process/Vendor.class
 com/bsd/oms/process/PurchaseItem.class
 com/bsd/oms/process/TaskSummary.class
@@ -12,3 +13,4 @@ com/bsd/oms/process/Quotation.class
 com/bsd/oms/process/PRQuotations.class
 com/bsd/oms/process/PurchaseRequest.class
 com/bsd/oms/process/ProductSubCategory.class
+com/bsd/oms/utils/OMSDateUtil.class

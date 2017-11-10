@@ -1,113 +1,30 @@
 package com.bsd.oms.process;
 
+import java.util.List;
+
 public class Quotation implements java.io.Serializable {
 
 	static final long serialVersionUID = 1L;
 	
 	private long id;
 	
-	private long vendorId;
+	private Vendor vendor;
 	
-	private long category;
-	
-	private long subCategory;
-	
-	private long productId;
-
 	private String desciprtion;
 	
-	private int quantity;
-
-	private int unitPrice;
+	private String requestNo;
 	
-	private int discount;
-
-	private int salePrice;
-
-
-	public long getCategory() {
-		return category;
-	}
-
-	public void setCategory(long category) {
-		this.category = category;
-	}
-
-	public long getSubCategory() {
-		return subCategory;
-	}
-
-	public void setSubCategory(long subCategory) {
-		this.subCategory = subCategory;
-	}
-
-	public long getProductId() {
-		return productId;
-	}
-
-	public void setProductId(long productId) {
-		this.productId = productId;
-	}
-
-	public String getDesciprtion() {
-		return desciprtion;
-	}
-
-	public void setDesciprtion(String desciprtion) {
-		this.desciprtion = desciprtion;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	public int getUnitPrice() {
-		return unitPrice;
-	}
-
-	public void setUnitPrice(int unitPrice) {
-		this.unitPrice = unitPrice;
-	}
-
-	public int getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(int discount) {
-		this.discount = discount;
-	}
-
-	public int getSalePrice() {
-		return salePrice;
-	}
-
-	public void setSalePrice(int salePrice) {
-		this.salePrice = salePrice;
-	}
-
+	private List<PurchaseItem> items;
+	
+	private double quoteAmount;
+	
+	private double tax;
+	
+	private double totalAmount;
+		
 	
 	public Quotation(){
 		
-	}
-
-	public Quotation(long id, long vendorId, String requestNo, long category,
-			long subCategory, long productId, String desciprtion, int quantity,
-			int unitPrice, int discount, int salePrice) {
-		super();
-		this.id = id;
-		this.vendorId = vendorId;
-		this.category = category;
-		this.subCategory = subCategory;
-		this.productId = productId;
-		this.desciprtion = desciprtion;
-		this.quantity = quantity;
-		this.unitPrice = unitPrice;
-		this.discount = discount;
-		this.salePrice = salePrice;
 	}
 
 	public long getId() {
@@ -118,12 +35,61 @@ public class Quotation implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public long getVendorId() {
-		return vendorId;
+	public Vendor getVendor() {
+		return vendor;
 	}
 
-	public void setVendorId(long vendorId) {
-		this.vendorId = vendorId;
+	public void setVendor(Vendor vendor) {
+		this.vendor = vendor;
 	}
+
+	public String getDesciprtion() {
+		return desciprtion;
+	}
+
+	public void setDesciprtion(String desciprtion) {
+		this.desciprtion = desciprtion;
+	}
+
+	public String getRequestNo() {
+		return requestNo;
+	}
+
+	public void setRequestNo(String requestNo) {
+		this.requestNo = requestNo;
+	}
+
+	public List<PurchaseItem> getItems() {
+		return items;
+	}
+
+	public void setItems(List<PurchaseItem> items) {
+		this.items = items;
+	}
+
+	public double getTax() {
+		return tax;
+	}
+
+	public void setTax(double tax) {
+		this.tax = tax;
+	}
+
+	public double getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
+	public double getQuoteAmount() {
+		return quoteAmount;
+	}
+
+	public void setQuoteAmount(double quoteAmount) {
+		this.quoteAmount = quoteAmount;
+	}
+
 
 }

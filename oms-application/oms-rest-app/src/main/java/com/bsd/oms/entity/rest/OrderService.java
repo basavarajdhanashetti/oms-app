@@ -1,7 +1,5 @@
 package com.bsd.oms.entity.rest;
 
-import io.swagger.annotations.Api;
-
 import java.net.URI;
 
 import org.slf4j.Logger;
@@ -23,7 +21,6 @@ import com.bsd.oms.repo.OrderRepository;
 
 @RestController
 @RequestMapping(path = "/orders")
-@Api(tags =  {"Entity", "Order"})
 public class OrderService {
 
 	private static Logger LOG = LoggerFactory.getLogger(OrderService.class);

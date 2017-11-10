@@ -20,22 +20,17 @@ public class PurchaseItem implements java.io.Serializable {
 	
 	private String description;
 
+	private double unitPrice;
+	
+	private double discount;
+
+	private double salePrice;
+	
 	
 	public PurchaseItem(){
 		
 	}
 	
-	public PurchaseItem(long id, long category, long subCategory, long productId,
-			int quantity, String desciprtion) {
-		super();
-		this.id = id;
-		this.category = category;
-		this.subCategory = subCategory;
-		this.productId = productId;
-		this.quantity = quantity;
-		this.setDescription(desciprtion);
-	}
-
 	public long getCategory() {
 		return category;
 	}
@@ -90,6 +85,30 @@ public class PurchaseItem implements java.io.Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public double getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(double unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
+	public double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(double discount) {
+		this.discount = discount;
+	}
+
+	public double getSalePrice() {
+		return salePrice;
+	}
+
+	public void setSalePrice(double salePrice) {
+		this.salePrice = salePrice;
 	}
 	
 }

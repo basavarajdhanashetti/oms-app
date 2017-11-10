@@ -6,12 +6,10 @@ import java.util.Map;
 
 import org.kie.server.client.KieServicesClient;
 import org.kie.server.client.ProcessServicesClient;
-import org.kie.server.client.UserTaskServicesClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,21 +56,5 @@ public class PurchaseRequestController {
 		return ResponseEntity.created(location).build();
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	@GetMapping("users/{userId}/purchase-requests/{taskId}")
-	public ResponseEntity<PurchaseRequest> getPurchaseRequestByTaskId(@PathVariable String userId, @PathVariable long taskId) {
-		System.out.println("Getting PurchaseRequest tasks for id:" + taskId);
-		KieServicesClient kieServerClient = jbpmConnection.getNewSession(userId);
-		UserTaskServicesClient taskClient = kieServerClient.getServicesClient(UserTaskServicesClient.class);
-
-		Map<String, Object> inputData = taskClient.getTaskInputContentByTaskId(propertyConfig.getProcurementContainer(), taskId);
-		PurchaseRequest purchaseReq = (PurchaseRequest) inputData.get("purchaseRequestIN");
-		System.out.println("PurchaseRequest : " + purchaseReq.toString());
-
-		return ResponseEntity.ok(purchaseReq);
-	}
 
 }

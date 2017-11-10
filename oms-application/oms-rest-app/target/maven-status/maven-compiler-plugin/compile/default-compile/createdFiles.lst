@@ -1,9 +1,13 @@
-com/bsd/oms/OMSRestAppMain.class
 com/bsd/oms/entity/rest/DepartmentService.class
-com/bsd/oms/PropertyConfig.class
 com/bsd/oms/entity/rest/AddressService.class
 com/bsd/oms/entity/rest/CustomerService.class
+com/bsd/oms/entity/rest/ShipmentService.class
+com/bsd/oms/OMSRestAppMain.class
+com/bsd/oms/entity/rest/QuotationService.class
+com/bsd/oms/PropertyConfig.class
+com/bsd/oms/entity/rest/PurchaseRequestService.class
+com/bsd/oms/service/rest/ProcurementService.class
 com/bsd/oms/entity/rest/ProductCategoryService.class
+com/bsd/oms/entity/rest/VendorService.class
 com/bsd/oms/entity/rest/OrderService.class
 com/bsd/oms/SwaggerConfig.class
-com/bsd/oms/entity/rest/ShipmentService.class

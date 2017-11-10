@@ -15,10 +15,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import com.bsd.oms.domain.Message;
+import com.bsd.oms.entity.HumanTaskMapping;
 import com.bsd.oms.entity.User;
+import com.bsd.oms.repo.HumanTaskMappingRepository;
 
 @Controller
 @RequestMapping("/process/tasks")
@@ -32,15 +35,19 @@ public class TaskController {
 	@Value("${oms-process-url}")
 	private String omsProcessRootURL;
 
+	@Autowired
+	private HumanTaskMappingRepository taskMappingRepo;
+	
 	@GetMapping
 	public String getMyTasks(Model model, HttpSession session) {
 
 		User user = (User) session.getAttribute("Session_UserDetails");
-		if(user == null){
-			return "rediect:/";
+		if (user == null) {
+			return "redirect:/logout";
 		}
 
-		ResponseEntity<List> taskResponse = restTemplate.getForEntity(this.omsProcessRootURL + "/users/" + user.getUserName() + "/tasks", List.class);
+		ResponseEntity<List> taskResponse = restTemplate.getForEntity(this.omsProcessRootURL + "/users/" + user.getUserName() + "/tasks",
+				List.class);
 
 		if (taskResponse.getStatusCode() == HttpStatus.OK) {
 			List taskList = taskResponse.getBody();
@@ -64,12 +71,12 @@ public class TaskController {
 	public String claimTasks(Model model, HttpSession session, @PathVariable long taskId) {
 
 		User user = (User) session.getAttribute("Session_UserDetails");
-		if(user == null){
-			return "rediect:/";
+		if (user == null) {
+			return "redirect:/logout";
 		}
 
-		ResponseEntity<Message> messageEntity = restTemplate.getForEntity(this.omsProcessRootURL + "/users/" + user.getUserName() + "/tasks/" + taskId
-				+ "/claim", Message.class);
+		ResponseEntity<Message> messageEntity = restTemplate.getForEntity(this.omsProcessRootURL + "/users/" + user.getUserName()
+				+ "/tasks/" + taskId + "/claim", Message.class);
 
 		if (messageEntity.getStatusCode() == HttpStatus.OK) {
 			String msg = messageEntity.getBody().getMessage();
@@ -91,12 +98,12 @@ public class TaskController {
 	public String startTasks(Model model, HttpSession session, @PathVariable long taskId) {
 
 		User user = (User) session.getAttribute("Session_UserDetails");
-		if(user == null){
-			return "rediect:/";
+		if (user == null) {
+			return "redirect:/logout";
 		}
 
-		ResponseEntity<Message> messageEntity = restTemplate.getForEntity(this.omsProcessRootURL + "/users/" + user.getUserName() + "/tasks/" + taskId
-				+ "/start", Message.class);
+		ResponseEntity<Message> messageEntity = restTemplate.getForEntity(this.omsProcessRootURL + "/users/" + user.getUserName()
+				+ "/tasks/" + taskId + "/start", Message.class);
 
 		if (messageEntity.getStatusCode() == HttpStatus.OK) {
 			String msg = messageEntity.getBody().getMessage();
@@ -118,12 +125,12 @@ public class TaskController {
 	public String releaseTasks(Model model, HttpSession session, @PathVariable long taskId) {
 
 		User user = (User) session.getAttribute("Session_UserDetails");
-		if(user == null){
-			return "rediect:/";
+		if (user == null) {
+			return "redirect:/logout";
 		}
 
-		ResponseEntity<Message> messageEntity = restTemplate.getForEntity(this.omsProcessRootURL + "/users/" + user.getUserName() + "/tasks/" + taskId
-				+ "/release", Message.class);
+		ResponseEntity<Message> messageEntity = restTemplate.getForEntity(this.omsProcessRootURL + "/users/" + user.getUserName()
+				+ "/tasks/" + taskId + "/release", Message.class);
 
 		if (messageEntity.getStatusCode() == HttpStatus.OK) {
 			String msg = messageEntity.getBody().getMessage();
@@ -132,5 +139,30 @@ public class TaskController {
 			model.addAttribute("message", "Problem releasing tasks for you. Please contact Admin.");
 		}
 		return "redirect:/process/tasks";
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param session
+	 * @param taskId
+	 * @return
+	 */
+	@GetMapping(path = "/{taskId}/open")
+	public String openTasks(Model model, HttpSession session, @PathVariable long taskId, @RequestParam String taskName) {
+
+		User user = (User) session.getAttribute("Session_UserDetails");
+		if (user == null) {
+			return "redirect:/logout";
+		}
+
+		HumanTaskMapping taskMapping =  taskMappingRepo.getByTaskName(taskName);
+		if (taskMapping == null) {
+			LOG.error("Human Task Mapping is not configured for task name ("+taskName+")");
+			model.addAttribute("message", "Problem opening tasks for you. Please contact Admin.");
+			return "redirect:/process/tasks";
+		} else {
+			return "redirect:" + taskMapping.getNavigationPath() + "/tasks/" + taskId;
+		}
 	}
 }

@@ -4,6 +4,8 @@ com/bsd/oms/rest/ProductHeirachyService.class
 com/bsd/oms/dto/BarChart.class
 com/bsd/oms/controllers/OrderControler.class
 com/bsd/oms/dashboard/WelcomeController.class
+com/bsd/oms/service/EntityService.class
+com/bsd/oms/dto/FormSelection.class
 com/bsd/oms/controllers/PurchaseRequestController.class
 com/bsd/oms/controllers/LoginController.class
 com/bsd/oms/dashboard/DashboardAPI.class
@@ -13,4 +15,5 @@ com/bsd/oms/dashboard/ReportType.class
 com/bsd/oms/dto/ProductSaleData.class
 com/bsd/oms/dto/SaleData.class
 com/bsd/oms/dto/PieChart.class
+com/bsd/oms/controllers/QuotationController.class
 com/bsd/oms/dto/LoginDetails.class

@@ -7,7 +7,7 @@ public class ApprovalDetails implements java.io.Serializable {
 
 	private String userId;
 	
-	private String approvedDate;
+	private String createdDate;
 	
 	public ApprovalDetails(){}
 
@@ -19,18 +19,23 @@ public class ApprovalDetails implements java.io.Serializable {
 		this.userId = userId;
 	}
 
-	public String getApprovedDate() {
-		return approvedDate;
-	}
-
-	public void setApprovedDate(String approvedDate) {
-		this.approvedDate = approvedDate;
-	}
-
-	public ApprovalDetails(String userId, String approvedDate) {
+	public ApprovalDetails(String userId, String createdDate) {
 		super();
 		this.userId = userId;
-		this.approvedDate = approvedDate;
+		this.createdDate = createdDate;
+	}
+
+	@Override
+	public String toString() {
+		return "ApprovalDetails [userId=" + userId + ", createdDate=" + createdDate + "]";
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
 	}
 	
 }

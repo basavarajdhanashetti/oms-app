@@ -1,7 +1,6 @@
 package com.bsd.oms.controllers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +23,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import com.bsd.oms.domain.Message;
-import com.bsd.oms.entity.Department;
 import com.bsd.oms.entity.User;
-import com.bsd.oms.process.Product;
-import com.bsd.oms.process.ProductCategory;
+import com.bsd.oms.process.ApprovalDetails;
 import com.bsd.oms.process.PurchaseItem;
 import com.bsd.oms.process.PurchaseRequest;
+import com.bsd.oms.process.TaskSummary;
+import com.bsd.oms.service.EntityService;
+import com.bsd.oms.utils.OMSDateUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
@@ -43,6 +44,10 @@ public class PurchaseRequestController {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private EntityService entityService;
+	
 
 	@Value("${oms-rest-url}")
 	private String omsRestRootURL;
@@ -61,8 +66,8 @@ public class PurchaseRequestController {
 		PurchaseRequest req = getPRDetails();
 		model.addAttribute("purchaseReqForm", req);
 		session.setAttribute("Session_purchaseRequest", req);
-		model.addAttribute("categoryList", getCategories());
-		model.addAttribute("departmentList", getDepartments());
+		model.addAttribute("categoryList", entityService.getCategories());
+		model.addAttribute("departmentList", entityService.getDepartments());
 		return "purchaseReqForm";
 	}
 
@@ -74,7 +79,7 @@ public class PurchaseRequestController {
 	 */
 	@RequestMapping(path = "/newpritem", method = RequestMethod.GET)
 	public String newPRItem(Model model, HttpSession session) {
-		model.addAttribute("categoryList", getCategories());
+		model.addAttribute("categoryList", entityService.getCategories());
 		model.addAttribute("purchaseItem", new PurchaseItem());
 		return "addPurchaseItem";
 	}
@@ -91,8 +96,8 @@ public class PurchaseRequestController {
 		req.getItems().remove(index);
 		model.addAttribute("purchaseReqForm", req);
 		session.setAttribute("Session_purchaseRequest", req);
-		model.addAttribute("categoryList", getCategories());
-		model.addAttribute("departmentList", getDepartments());
+		model.addAttribute("categoryList", entityService.getCategories());
+		model.addAttribute("departmentList", entityService.getDepartments());
 		return "purchaseReqForm";
 	}
 	
@@ -105,60 +110,17 @@ public class PurchaseRequestController {
 	@RequestMapping(path = "/addpritem", method = RequestMethod.POST)
 	public String addPRItem(@ModelAttribute PurchaseItem item, Model model, HttpSession session) {
 		PurchaseRequest req = (PurchaseRequest) session.getAttribute("Session_purchaseRequest");
-		item.setProduct(getProduct(item.getCategory(), item.getSubCategory(), item.getProductId()));
+		item.setProduct(entityService.getProduct(item.getCategory(), item.getSubCategory(), item.getProductId()));
 		req.getItems().add(item);
 		model.addAttribute("purchaseReqForm", req);
 		session.setAttribute("Session_purchaseRequest", req);
-		model.addAttribute("categoryList", getCategories());
-		model.addAttribute("departmentList", getDepartments());
+		model.addAttribute("categoryList", entityService.getCategories());
+		model.addAttribute("departmentList", entityService.getDepartments());
 		return "purchaseReqForm";
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
-	private List<Department> getDepartments() {
-		ResponseEntity<Department[]> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/departments", Department[].class);
+	
 
-		if (categoryResp.getStatusCode() == HttpStatus.OK) {
-			return Arrays.asList(categoryResp.getBody());
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 * @return
-	 */
-	private List<ProductCategory> getCategories() {
-		ResponseEntity<ProductCategory[]> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/categories",
-				ProductCategory[].class);
-
-		if (categoryResp.getStatusCode() == HttpStatus.OK) {
-			return Arrays.asList(categoryResp.getBody());
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 * @return
-	 */
-	private Product getProduct(long categoryId, long subCategoryId, long productId) {
-		ResponseEntity<Product> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/categories/" + categoryId
-				+ "/subcategories/" + subCategoryId + "/products/" + productId, Product.class);
-
-		if (categoryResp.getStatusCode() == HttpStatus.OK) {
-			return categoryResp.getBody();
-		} else {
-			return null;
-		}
-	}
 
 	/**
 	 * 
@@ -169,7 +131,7 @@ public class PurchaseRequestController {
 		req.setDepartment("1");
 		req.setRequestDate("2017/11/01");
 		req.setRequestedBy("Raj");
-		req.setRequestNo("PR-001");
+		req.setRequestNo("PR/2017/11/001");
 
 		PurchaseItem item = new PurchaseItem();
 		item.setCategory(1);
@@ -178,7 +140,7 @@ public class PurchaseRequestController {
 		item.setProductId(1);
 		item.setQuantity(10);
 		item.setSubCategory(1);
-		item.setProduct(getProduct(1, 1, 1));
+		item.setProduct(entityService.getProduct(1, 1, 1));
 
 		List<PurchaseItem> items = new ArrayList<PurchaseItem>();
 		items.add(item);
@@ -191,26 +153,39 @@ public class PurchaseRequestController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.GET, path = "/purchases/{taskId}")
+	@RequestMapping(method = RequestMethod.GET, path = "/purchases/tasks/{taskId}")
 	public String getPurchaseRequest(Model model, @PathVariable long taskId, HttpSession session) {
 		System.out.println("Getting PurchaseRequest details");
 
 		User user = (User) session.getAttribute("Session_UserDetails");
 		if(user == null){
-			return "rediect:/";
+			return "redirect:/logout";
 		}
 		
-		ResponseEntity<PurchaseRequest> purchaseRequestResp = restTemplate.getForEntity(this.omsProcessRootURL + "/users/"+user.getUserName()+"/purchase-requests/" + taskId,
-				PurchaseRequest.class);
+		ResponseEntity<Map> purchaseRequestResp = restTemplate.getForEntity(this.omsProcessRootURL + "/users/"+user.getUserName()+"/tasks/" + taskId+"/content",
+				Map.class);
 
 		if (purchaseRequestResp.getStatusCode() == HttpStatus.OK) {
-			PurchaseRequest purchaseRequest = purchaseRequestResp.getBody();
+			
+			ObjectMapper objMapper = new ObjectMapper();
+			PurchaseRequest purchaseRequest = objMapper.convertValue(purchaseRequestResp.getBody().get("purchaseRequestIN"),PurchaseRequest.class);
 			purchaseRequest.setId(taskId);
-
+			
+			for (PurchaseItem item : purchaseRequest.getItems()) {
+				item.setProduct(entityService.getProduct(item.getCategory(), item.getSubCategory(), item.getProductId()));
+			}
+			
+			ResponseEntity<TaskSummary> taskSummaryResp = restTemplate.getForEntity(this.omsProcessRootURL + "/users/"+user.getUserName()+"/tasks/" + taskId+"",
+					TaskSummary.class);
+			if(taskSummaryResp.getStatusCode() == HttpStatus.OK){
+				model.addAttribute("taskSummary", taskSummaryResp.getBody());
+			}else{
+				LOG.error("Error fetching task summary data for task id: {0}", taskId);
+			}
 			session.setAttribute("Session_purchaseRequest", purchaseRequest);
 			model.addAttribute("purchaseReqForm", purchaseRequest);
-			model.addAttribute("categoryList", getCategories());
-			model.addAttribute("departmentList", getDepartments());
+			model.addAttribute("categoryList", entityService.getCategories());
+			model.addAttribute("departmentList", entityService.getDepartments());
 		} else {
 			model.addAttribute("message", "Problem fetching tasks for you. Please contact Admin.");
 		}
@@ -228,8 +203,12 @@ public class PurchaseRequestController {
 		System.out.println("Received purchaseRequest with details: " + purchaseRequest.toString());
 		User user = (User) session.getAttribute("Session_UserDetails");
 		if(user == null){
-			return "rediect:/";
+			return "redirect:/logout";
 		}
+		for (PurchaseItem item : purchaseRequest.getItems()) {
+			item.setProduct(entityService.getProduct(item.getCategory(), item.getSubCategory(), item.getProductId()));
+		}
+		purchaseRequest.setRequestedBy(user.getUserName());
 		ResponseEntity<Long> processResponse = restTemplate.postForEntity(this.omsProcessRootURL + "/users/"+user.getUserName()+"/purchase-requests", purchaseRequest,
 				Long.class);
 
@@ -256,13 +235,17 @@ public class PurchaseRequestController {
 
 		User user = (User) session.getAttribute("Session_UserDetails");
 		if(user == null){
-			return "rediect:/";
+			return "redirect:/logout";
 		}
 
+		for (PurchaseItem item : purchaseRequest.getItems()) {
+			item.setProduct(entityService.getProduct(item.getCategory(), item.getSubCategory(), item.getProductId()));
+		}
+		
 		Map<String, Object> taskData = new HashMap<String, Object>();
-		taskData.put("prDetailsOut", purchaseRequest);
+		taskData.put("purchaseRequestOUT", purchaseRequest);
 
-		ResponseEntity<Message> processResponse = restTemplate.postForEntity(this.omsRestRootURL + "/users/" + user.getUserName()
+		ResponseEntity<Message> processResponse = restTemplate.postForEntity(this.omsProcessRootURL + "/users/" + user.getUserName()
 				+ "/tasks/" + purchaseRequest.getId() + "/complete", taskData, Message.class);
 
 		if (processResponse.getStatusCode() == HttpStatus.OK) {
@@ -274,4 +257,39 @@ public class PurchaseRequestController {
 		return "redirect:/process/tasks";
 	}
 
+	/**
+	 * 
+	 * @param model
+	 * @param purchaseRequest
+	 * @return
+	 */
+	@RequestMapping(path = "/purchases/approval", method = RequestMethod.POST)
+	public String approvePRTask(Model model, HttpSession session, @RequestParam(name="action") boolean action) {
+		
+		User user = (User) session.getAttribute("Session_UserDetails");
+		if(user == null){
+			return "redirect:/logout";
+		}
+		PurchaseRequest purchaseRequest = (PurchaseRequest)session.getAttribute("Session_purchaseRequest");
+		System.out.println("Approve purchaseRequest with details: " + purchaseRequest.toString() + ", approval action :"+  ( action ? "Approved": "Rejected"));
+
+		for (PurchaseItem item : purchaseRequest.getItems()) {
+			item.setProduct(entityService.getProduct(item.getCategory(), item.getSubCategory(), item.getProductId()));
+		}
+		purchaseRequest.setApprover(new ApprovalDetails(user.getUserName(), OMSDateUtil.getCurrentDate()));
+		Map<String, Object> taskData = new HashMap<String, Object>();
+		taskData.put("purchaseRequestOUT", purchaseRequest);
+		taskData.put("prApprovedOUT", action);
+
+		ResponseEntity<Message> processResponse = restTemplate.postForEntity(this.omsProcessRootURL + "/users/" + user.getUserName()
+				+ "/tasks/" + purchaseRequest.getId() + "/complete", taskData, Message.class);
+
+		if (processResponse.getStatusCode() == HttpStatus.OK) {
+			LOG.debug("Task completed now.");
+			model.addAttribute("message", "Process Re-initiated Successfully (" + processResponse.getBody().getMessage() + ")");
+		} else {
+			model.addAttribute("message", "Problem initiating order process. Please contact Admin.");
+		}
+		return "redirect:/process/tasks";
+	}
 }

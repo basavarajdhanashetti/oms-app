@@ -1,7 +1,5 @@
 package com.bsd.oms.entity.rest;
 
-import io.swagger.annotations.Api;
-
 import java.net.URI;
 
 import org.slf4j.Logger;
@@ -24,7 +22,6 @@ import com.bsd.oms.repo.CustomerRepository;
 
 @RestController
 @RequestMapping(path = "/customers")
-@Api(tags =  {"Entity", "Customer"})
 public class CustomerService {
 
 	private static Logger LOG = LoggerFactory.getLogger(CustomerService.class);

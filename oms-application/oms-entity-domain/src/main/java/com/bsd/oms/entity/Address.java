@@ -4,8 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,10 +14,6 @@ public class Address {
     @Column(name = "id")
 	@GeneratedValue
     private Long id;
-	
-	@ManyToOne
-	@JoinColumn(name = "id_customer")
-	private Customer customer;
 	
 	@Column(name = "line1")
 	private String line1;
@@ -51,14 +45,6 @@ public class Address {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
 	}
 
 	public String getLine1() {

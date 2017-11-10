@@ -15,27 +15,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>SB Admin 2 - Bootstrap Admin Theme</title>
-
-<!-- Bootstrap Core CSS -->
-<link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- MetisMenu CSS -->
-<link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
-
-<!-- Custom CSS -->
-<link href="../dist/css/sb-admin-2.css" rel="stylesheet">
-
-<!-- Custom Fonts -->
-<link href="../vendor/font-awesome/css/font-awesome.min.css"
-	rel="stylesheet" type="text/css">
-
-<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+<jsp:include page="styleAndCss.jsp"></jsp:include>
 
 </head>
 
@@ -52,13 +32,20 @@
 				<div class="container-fluid">
 					<div class="row">
 						<div class="col-lg-12">
-							<c:if test="${purchaseReqForm.id==0}">
-								<h1 class="page-header">New Purchase Request</h1>
-							</c:if>
-							<c:if test="${purchaseReqForm.id!=0}">
-								<h1 class="page-header">Modify Purchase Request</h1>
-							</c:if>
-
+							<c:choose>
+								<c:when test="${taskSummary.name == 'Approve Purchase Request'}">
+									<h1 class="page-header">Approve Purchase Request</h1>
+									<c:set var = "readOnlyVals" value = "true"/>
+								</c:when>
+								<c:when test="${taskSummary.name == 'Modify Purchase Request'}">
+									<h1 class="page-header">Modify Purchase Request</h1>
+								</c:when>
+								<c:otherwise>
+									<h1 class="page-header">New Purchase Request</h1>
+								</c:otherwise>
+							</c:choose>
+							<form:hidden path="id"/>
+							<form:hidden path="requestedBy"/>
 						</div>
 						<!-- /.col-lg-12 -->
 					</div>
@@ -75,7 +62,7 @@
 											<div class="form-group">
 												<label>Department</label>
 												<form:select path="department" class="form-control"
-													id="department-id">
+													id="department-id" disabled="${readOnlyVals}">
 													<form:option value="">--select--</form:option>
 													<form:options items="${departmentList}" itemValue="id"
 														itemLabel="name" />
@@ -88,7 +75,7 @@
 											<div class="form-group">
 												<label>Request No</label>
 												<form:input path="requestNo" class="form-control"
-													id="bnm-dd-id" />
+													id="bnm-dd-id" disabled="${readOnlyVals}"/>
 												<form:errors path="requestNo" cssClass="errorMsg" />
 											</div>
 										</div>
@@ -100,7 +87,7 @@
 												<label>Request Date</label>
 												<div class="input-group date" id="datetimepicker1">
 													<form:input path="requestDate" class="form-control"
-														placeholder="Select Date" />
+														placeholder="Select Date" disabled="${readOnlyVals}"/>
 												</div>
 
 											</div>
@@ -108,7 +95,11 @@
 									</div>
 									<div class="row">
 										<div class="col-lg-12" align="right">
-											<a href="newpritem">Add Item</a>
+											<c:if
+												test="${taskSummary ==  null or taskSummary.name != 'Approve Purchase Request'}">
+												<a href="newpritem">Add Item</a>
+											</c:if>
+
 										</div>
 									</div>
 									<div class="row">
@@ -125,7 +116,10 @@
 																	<td>Product</td>
 																	<td>Description</td>
 																	<td>Quantity</td>
-																	<td>Action</td>
+																	<c:if
+																		test="${taskSummary ==  null or taskSummary.name != 'Approve Purchase Request'}">
+																		<td>Action</td>
+																	</c:if>
 																</tr>
 															</thead>
 															<tbody>
@@ -142,7 +136,11 @@
 																		<td>${item.product.name}</td>
 																		<td>${item.description}</td>
 																		<td>${item.quantity}</td>
-																		<td><a href="removepritem?index=${row.index}"> Delete </a></td>
+																		<c:if
+																			test="${taskSummary ==  null or taskSummary.name != 'Approve Purchase Request'}">
+																			<td><a href="${pageContext.request.contextPath}/removepritem?index=${row.index}">
+																					Delete </a></td>
+																		</c:if>
 																	</tr>
 
 																</c:forEach>
@@ -156,17 +154,30 @@
 
 									<div class="row">
 										<div class="col-lg-12">
-											<c:if test="${purchaseReqForm.id==0}">
-												<button type="submit" class="btn btn-primary"
-													formaction="purchases" formmethod="post">Save
-													Details</button>
-											</c:if>
-											<c:if test="${purchaseReqForm.id!=0}">
-												<button type="submit" class="btn btn-primary"
-													formaction="purchases/complete" formmethod="post">Update
-													Details</button>
-											</c:if>
-											<button type="reset" class="btn btn-primary">Reset</button>
+											<c:choose>
+												<c:when
+													test="${taskSummary.name == 'Approve Purchase Request'}">
+													<button type="submit" class="btn btn-primary"
+														formaction="${pageContext.request.contextPath}/purchases/approval?action=true"
+														formmethod="post">Approve</button>
+													<button type="submit" class="btn btn-primary"
+														formaction="${pageContext.request.contextPath}/purchases/approval?action=false"
+														formmethod="post">Reject</button>
+												</c:when>
+												<c:when
+													test="${taskSummary.name == 'Modify Purchase Request'}">
+													<button type="submit" class="btn btn-primary"
+														formaction="${pageContext.request.contextPath}/purchases/complete" formmethod="post">Submit</button>
+													<button type="reset" class="btn btn-primary">Reset</button>
+												</c:when>
+												<c:otherwise>
+													<button type="submit" class="btn btn-primary"
+														formaction="${pageContext.request.contextPath}/purchases" formmethod="post">Submit</button>
+													<button type="reset" class="btn btn-primary">Reset</button>
+												</c:otherwise>
+											</c:choose>
+
+
 										</div>
 									</div>
 
@@ -186,34 +197,7 @@
 	</div>
 	<!-- /#wrapper -->
 
-	<!-- jQuery -->
-	<script src="../vendor/jquery/jquery.min.js"></script>
-
-	<!-- Bootstrap Core JavaScript -->
-	<script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-
-	<!-- Metis Menu Plugin JavaScript -->
-	<script src="../vendor/metisMenu/metisMenu.min.js"></script>
-
-	<!-- Custom Theme JavaScript -->
-	<script src="../dist/js/sb-admin-2.js"></script>
-
-	<!--Project custom JavaScript -->
-	<script src="<c:url value="../oms/oms-rest-client.js"/>"></script>
-
-	<!-- Datepicker related JavaScript -->
-	<script src="<c:url value="../datepicker/js/bootstrap-datepicker.js"/>"></script>
-
-	<script type="text/javascript">
-		$(function() {
-			$('#datetimepicker1 input').datepicker({
-				format : "yyyy/mm/dd",
-				clearBtn : true,
-				autoclose : true,
-				todayHighlight : true
-			});
-		});
-	</script>
+	
 
 </body>
 

@@ -1,7 +1,5 @@
 package com.bsd.oms.entity.rest;
 
-import io.swagger.annotations.Api;
-
 import java.net.URI;
 
 import org.slf4j.Logger;
@@ -24,7 +22,6 @@ import com.bsd.oms.repo.AddressRepository;
 
 @RestController
 @RequestMapping(path = "/addresses")
-@Api(tags =  {"Entity", "Address"})
 public class AddressService {
 
 

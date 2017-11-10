@@ -48,4 +48,18 @@ public class LoginController {
 			}
 		}
 	} 
+	
+	/**
+	 * 
+	 * @param login
+	 * @param result
+	 * @param model
+	 * @param session
+	 * @return
+	 */
+	@GetMapping(path="/logout")
+	public String logout(@Valid @ModelAttribute(value="loginForm") LoginDetails login, BindingResult result, Model model, HttpSession session){
+		session.invalidate();
+		return "login";
+	} 
 }
