@@ -9,9 +9,11 @@ com/bsd/oms/dto/FormSelection.class
 com/bsd/oms/controllers/PurchaseRequestController.class
 com/bsd/oms/controllers/LoginController.class
 com/bsd/oms/dashboard/DashboardAPI.class
+com/bsd/oms/controllers/PurchaseOrderController.class
 com/bsd/oms/dashboard/ReadWriteExcelFile.class
 com/bsd/oms/SpringBootWebApplication.class
 com/bsd/oms/dashboard/ReportType.class
+com/bsd/oms/rest/ReportController.class
 com/bsd/oms/dto/ProductSaleData.class
 com/bsd/oms/dto/SaleData.class
 com/bsd/oms/dto/PieChart.class

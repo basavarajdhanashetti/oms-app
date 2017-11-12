@@ -1,5 +1,6 @@
 package com.bsd.oms.entity;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -34,7 +35,11 @@ public class PurchaseOrder {
 	@JoinColumn(name="id_vendor", insertable=false, updatable=false)
 	private Vendor vendor;
 	
-	private double quoteAmount;
+	private String poNumber;
+	
+	private Date poDate;
+	
+	private double poAmount;
 	
 	private double tax;
 	
@@ -86,12 +91,12 @@ public class PurchaseOrder {
 		this.vendor = vendor;
 	}
 
-	public double getQuoteAmount() {
-		return quoteAmount;
+	public double getPoAmount() {
+		return poAmount;
 	}
 
-	public void setQuoteAmount(double quoteAmount) {
-		this.quoteAmount = quoteAmount;
+	public void setPoAmount(double quoteAmount) {
+		this.poAmount = quoteAmount;
 	}
 
 	public double getTax() {
@@ -124,6 +129,22 @@ public class PurchaseOrder {
 
 	public void setApprovalList(List<ApprovalDetails> approvalList) {
 		this.approvalList = approvalList;
+	}
+
+	public String getPoNumber() {
+		return poNumber;
+	}
+
+	public void setPoNumber(String poNumber) {
+		this.poNumber = poNumber;
+	}
+
+	public Date getPoDate() {
+		return poDate;
+	}
+
+	public void setPoDate(Date poDate) {
+		this.poDate = poDate;
 	}
 	
 }

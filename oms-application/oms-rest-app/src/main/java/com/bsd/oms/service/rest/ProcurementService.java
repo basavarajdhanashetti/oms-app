@@ -1,6 +1,9 @@
 package com.bsd.oms.service.rest;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -78,7 +81,7 @@ public class ProcurementService {
 		prEntity = purchaseRequestRepo.save(prEntity);
 
 		prEntity.setApprovalList(getApprovalDetails(purchaseRequest.getApprover().getUserId(), purchaseRequest.getApprover()
-				.getCreatedDate(), prEntity.getId(), MaterialType.PurchaseOrder, ApprovalStatusType.Approved));
+				.getCreatedDate(), prEntity.getId(), MaterialType.PurchaseOrder, ApprovalStatusType.Submited));
 
 		// Set purchase items
 		List<PurchaseItem> purchaseItems = new ArrayList<PurchaseItem>();
@@ -188,7 +191,7 @@ public class ProcurementService {
 	 * @param order
 	 * @return
 	 */
-	@PostMapping(path = "/purchases/{purchaseRequestId}/quotations/{quotationId}/purchaseorders", consumes = "application/json")
+	@PostMapping(path = "/purchases/{purchaseRequestId}/quotations/{quotationId}/purchaseorders")
 	public ResponseEntity<?> createPurchaseOrder(@PathVariable long purchaseRequestId,
 			@PathVariable long quotationId, @RequestParam String userId) {
 		LOG.debug("Create PO for Quotations id:" + quotationId );
@@ -199,12 +202,13 @@ public class ProcurementService {
 		PurchaseOrder po = new PurchaseOrder();
 		po.setIdQuotation(quot.getId());
 		po.setIdVendor(quot.getIdVendor());
-		po.setQuoteAmount(quot.getQuoteAmount());
+		po.setPoAmount(quot.getQuoteAmount());
 		po.setTax(quot.getTax());
 		po.setTotalAmount(quot.getTotalAmount());
-		
+		po.setPoDate(new Date());
 		po = purchaseOrderRepo.save(po);
-		
+		Calendar cal = Calendar.getInstance(); 
+		po.setPoNumber("PO-"+ cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1) + "/"+  String.format("%04d", po.getId()));
 		List<PurchaseOrderItem> items = new ArrayList<PurchaseOrderItem>();
 		
 		for (QuotationItem qItem : quot.getItems()) {

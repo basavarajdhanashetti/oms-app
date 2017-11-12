@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.bsd.oms.entity.PurchaseOrder;
 import com.bsd.oms.entity.Quotation;
+import com.bsd.oms.repo.PurchaseOrderRepository;
 import com.bsd.oms.repo.QuotationRepository;
 
 @RestController
@@ -27,6 +29,9 @@ public class QuotationService {
 
 	@Autowired
 	private QuotationRepository quotationRepo;
+	
+	@Autowired
+	private PurchaseOrderRepository purchaseOrderRepo;
 
 	/**
 	 * 
@@ -87,4 +92,15 @@ public class QuotationService {
 		return ResponseEntity.noContent().build();
 	}
 
+	/**
+	 * 
+	 * @param quotation
+	 * @return
+	 */
+	@GetMapping(path = "/{quotationId}/purchaseorder")
+	public ResponseEntity<PurchaseOrder> getPurchaseOrderByQuotation(@PathVariable long quotationId) {
+		LOG.debug("Get PurchaseOrder for by quotation id " + quotationId);
+
+		return ResponseEntity.ok(purchaseOrderRepo.getByIdQuotation(quotationId));
+	}
 }

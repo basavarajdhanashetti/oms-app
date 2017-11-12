@@ -103,7 +103,7 @@
 																	varStatus="row">
 																	<c:choose>
 																		<c:when test="${quot.id == quotationSelectionForm.id}">
-																			<tr bgcolor="yellow" >
+																			<tr bgcolor="lightgreen" >
 																				<td><a
 																					href="${pageContext.request.contextPath}/quotations/view/${quot.id}">${quot.vendor.name}</a></td>
 																				<td>${quot.vendor.contactNo}</td>

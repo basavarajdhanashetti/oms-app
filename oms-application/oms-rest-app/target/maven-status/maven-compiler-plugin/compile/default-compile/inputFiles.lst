@@ -3,11 +3,13 @@
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/VendorService.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/AddressService.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/service/rest/ProcurementService.java
+/home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/ReportService.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/SwaggerConfig.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/DepartmentService.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/QuotationService.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/PropertyConfig.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/CustomerService.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/PurchaseRequestService.java
+/home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/ReportViewService.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/entity/rest/OrderService.java
 /home/vagrant/personal/oms-app/oms-application/oms-rest-app/src/main/java/com/bsd/oms/OMSRestAppMain.java

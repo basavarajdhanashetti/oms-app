@@ -28,4 +28,13 @@ public class OMSDateUtil {
 		return new Date();
 	}
 
+	/**
+	 * 
+	 * @param time
+	 * @return
+	 */
+	public static Object getDBDateTime(Date time) {
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+	}
+
 }

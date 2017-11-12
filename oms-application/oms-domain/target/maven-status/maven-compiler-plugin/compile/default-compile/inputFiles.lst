@@ -9,6 +9,7 @@
 /home/vagrant/personal/oms-app/oms-application/oms-domain/src/main/java/com/bsd/oms/process/Product.java
 /home/vagrant/personal/oms-app/oms-application/oms-domain/src/main/java/com/bsd/oms/process/PurchaseRequest.java
 /home/vagrant/personal/oms-app/oms-application/oms-domain/src/main/java/com/bsd/oms/process/Quotation.java
+/home/vagrant/personal/oms-app/oms-application/oms-domain/src/main/java/com/bsd/oms/chart/Bar.java
 /home/vagrant/personal/oms-app/oms-application/oms-domain/src/main/java/com/bsd/oms/process/ApprovalDetails.java
 /home/vagrant/personal/oms-app/oms-application/oms-domain/src/main/java/com/bsd/oms/process/ProductSubCategory.java
 /home/vagrant/personal/oms-app/oms-application/oms-domain/src/main/java/com/bsd/oms/process/PRQuotations.java

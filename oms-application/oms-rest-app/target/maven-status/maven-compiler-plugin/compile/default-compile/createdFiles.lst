@@ -1,4 +1,6 @@
+com/bsd/oms/entity/rest/ReportService.class
 com/bsd/oms/entity/rest/DepartmentService.class
+com/bsd/oms/entity/rest/ReportViewService.class
 com/bsd/oms/entity/rest/AddressService.class
 com/bsd/oms/entity/rest/CustomerService.class
 com/bsd/oms/entity/rest/ShipmentService.class
@@ -11,3 +13,4 @@ com/bsd/oms/entity/rest/ProductCategoryService.class
 com/bsd/oms/entity/rest/VendorService.class
 com/bsd/oms/entity/rest/OrderService.class
 com/bsd/oms/SwaggerConfig.class
+com/bsd/oms/entity/rest/ReportService$1.class

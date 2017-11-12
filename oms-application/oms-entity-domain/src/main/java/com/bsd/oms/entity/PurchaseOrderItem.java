@@ -19,10 +19,6 @@ public class PurchaseOrderItem {
 	@Column(name="id_purchase_order")
 	private long idPurchaseOrder;
 	
-	@ManyToOne
-	@JoinColumn(name="id_purchase_order", insertable=false, updatable=false)
-	private PurchaseOrder purchaseOrder;
-	
 	@Column(name="id_product")
 	private long idProduct;
 	
@@ -54,14 +50,6 @@ public class PurchaseOrderItem {
 
 	public void setIdPurchaseOrder(long idPurchaseOrder) {
 		this.idPurchaseOrder = idPurchaseOrder;
-	}
-
-	public PurchaseOrder getPurchaseOrder() {
-		return purchaseOrder;
-	}
-
-	public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
-		this.purchaseOrder = purchaseOrder;
 	}
 
 	public long getIdProduct() {

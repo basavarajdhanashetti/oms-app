@@ -55,4 +55,5 @@
     <script src="${pageContext.request.contextPath}/vendor/raphael/raphael.min.js"></script>
     <script src="${pageContext.request.contextPath}/vendor/morrisjs/morris.min.js"></script>
     <script src="${pageContext.request.contextPath}/data/morris-data.js"></script>
+    <script src="${pageContext.request.contextPath}/data/my-reports.js"></script>
 

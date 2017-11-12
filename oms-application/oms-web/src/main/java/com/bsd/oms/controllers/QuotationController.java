@@ -376,6 +376,7 @@ public class QuotationController {
 			}
 		} else if (taskSummary.getName().equals(TaskEnum.QuotationApproval.getTaskName())) {
 			taskData.put("quotApprovedOUT", approved);
+			taskData.put("quotApprovedByOUT", user.getUserName());
 		}
 
 		ResponseEntity<Message> processResponse = restTemplate.postForEntity(this.omsProcessRootURL + "/users/" + user.getUserName()

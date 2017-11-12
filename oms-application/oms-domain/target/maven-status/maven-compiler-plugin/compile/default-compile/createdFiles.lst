@@ -6,6 +6,7 @@ com/bsd/oms/utils/TaskEnum.class
 com/bsd/oms/process/Vendor.class
 com/bsd/oms/process/PurchaseItem.class
 com/bsd/oms/process/TaskSummary.class
+com/bsd/oms/chart/Bar.class
 com/bsd/oms/process/Address.class
 com/bsd/oms/process/ProductCategory.class
 com/bsd/oms/process/OrderDetails.class

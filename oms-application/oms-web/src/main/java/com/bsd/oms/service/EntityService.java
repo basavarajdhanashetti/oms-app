@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.bsd.oms.controllers.PurchaseRequestController;
+import com.bsd.oms.entity.ApprovalDetails;
 import com.bsd.oms.entity.Department;
+import com.bsd.oms.entity.PurchaseOrder;
 import com.bsd.oms.entity.PurchaseRequest;
 import com.bsd.oms.entity.Quotation;
 import com.bsd.oms.process.Product;
@@ -33,7 +35,7 @@ public class EntityService {
 
 	@Value("${oms-process-url}")
 	private String omsProcessRootURL;
-	
+
 	/**
 	 * 
 	 * @return
@@ -47,13 +49,13 @@ public class EntityService {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
 	public Department getDepartmentById(long id) {
-		ResponseEntity<Department> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/departments/"+id, Department.class);
+		ResponseEntity<Department> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/departments/" + id, Department.class);
 
 		if (categoryResp.getStatusCode() == HttpStatus.OK) {
 			return categoryResp.getBody();
@@ -83,8 +85,7 @@ public class EntityService {
 	 * @return
 	 */
 	public List<Vendor> getVendors() {
-		ResponseEntity<Vendor[]> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/vendors",
-				Vendor[].class);
+		ResponseEntity<Vendor[]> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/vendors", Vendor[].class);
 
 		if (categoryResp.getStatusCode() == HttpStatus.OK) {
 			return Arrays.asList(categoryResp.getBody());
@@ -92,7 +93,7 @@ public class EntityService {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -105,7 +106,7 @@ public class EntityService {
 		if (categoryResp.getStatusCode() == HttpStatus.OK) {
 			return categoryResp.getBody();
 		} else {
-			LOG.error("Product is not found for id:"+ productId);
+			LOG.error("Product is not found for id:" + productId);
 			return null;
 		}
 	}
@@ -121,40 +122,41 @@ public class EntityService {
 		if (categoryResp.getStatusCode() == HttpStatus.OK) {
 			return categoryResp.getBody();
 		} else {
-			LOG.error("Vendor is not found for id:"+ vendorId);
+			LOG.error("Vendor is not found for id:" + vendorId);
 			return null;
 		}
-	}	
-	
+	}
+
 	/**
 	 * 
 	 * @return
 	 * @return
 	 */
 	public PurchaseRequest getPurchaseRequest(long purchaseReqId) {
-		ResponseEntity<PurchaseRequest> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/purchases/" + purchaseReqId, PurchaseRequest.class);
+		ResponseEntity<PurchaseRequest> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/purchases/" + purchaseReqId,
+				PurchaseRequest.class);
 
-		
 		if (categoryResp.getStatusCode() == HttpStatus.OK) {
 			return categoryResp.getBody();
 		} else {
-			LOG.error("PurchaseRequest is not found for id:"+ purchaseReqId);
+			LOG.error("PurchaseRequest is not found for id:" + purchaseReqId);
 			return null;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 * @return
 	 */
 	public List<Quotation> getQuotationsByPurchaseRequest(long purchaseReqId) {
-		ResponseEntity<Quotation[]> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/purchases/" + purchaseReqId + "/quotations", Quotation[].class);
-		
+		ResponseEntity<Quotation[]> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/purchases/" + purchaseReqId
+				+ "/quotations", Quotation[].class);
+
 		if (categoryResp.getStatusCode() == HttpStatus.OK) {
 			return Arrays.asList(categoryResp.getBody());
 		} else {
-			LOG.error("Quotations for PurchaseRequest is not found for id:"+ purchaseReqId);
+			LOG.error("Quotations for PurchaseRequest is not found for id:" + purchaseReqId);
 			return null;
 		}
 	}
@@ -166,15 +168,15 @@ public class EntityService {
 	 */
 	public Quotation getQuotation(long id) {
 
-		ResponseEntity<Quotation> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/quotations/"+id, Quotation.class);
-		
+		ResponseEntity<Quotation> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/quotations/" + id, Quotation.class);
+
 		if (categoryResp.getStatusCode() == HttpStatus.OK) {
 			return categoryResp.getBody();
 		} else {
-			LOG.error("Quotation is not found for id:"+ id);
+			LOG.error("Quotation is not found for id:" + id);
 			return null;
 		}
-	
+
 	}
 
 	/**
@@ -183,7 +185,58 @@ public class EntityService {
 	 */
 	public void updateQuotation(com.bsd.oms.entity.Quotation quotation) {
 
-		restTemplate.put(this.omsRestRootURL + "/quotations/"+quotation.getId(), quotation);
-	
-	}	
+		restTemplate.put(this.omsRestRootURL + "/quotations/" + quotation.getId(), quotation);
+
+	}
+
+	/**
+	 * 
+	 * @param purchaseOrderId
+	 * @return
+	 */
+	public PurchaseOrder getPurchaseOrder(long purchaseOrderId) {
+
+		ResponseEntity<PurchaseOrder> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/purchaseorders/" + purchaseOrderId,
+				PurchaseOrder.class);
+
+		if (categoryResp.getStatusCode() == HttpStatus.OK) {
+			return categoryResp.getBody();
+		} else {
+			LOG.error("PurchaseOrder is not found for id:" + purchaseOrderId);
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param quotationId
+	 * @return
+	 */
+	public PurchaseOrder getPurchaseOrderByQuotation(long quotationId) {
+
+		ResponseEntity<PurchaseOrder> categoryResp = restTemplate.getForEntity(this.omsRestRootURL + "/quotations/"+quotationId+"/purchaseorder",
+				PurchaseOrder.class);
+
+		if (categoryResp.getStatusCode() == HttpStatus.OK) {
+			return categoryResp.getBody();
+		} else {
+			LOG.error("PurchaseOrder is not found for id:" + quotationId);
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param approvalDetails
+	 */
+	public void postApprovalData(ApprovalDetails approvalDetails) {
+		ResponseEntity<String> approvalDAtaResp = restTemplate.postForEntity(this.omsRestRootURL + "/quotations/", 
+				approvalDetails, String.class);
+
+		if (approvalDAtaResp.getStatusCode() == HttpStatus.CREATED) {
+			LOG.error("Added entry to Approval Details");
+		} else {
+			LOG.error("Unable to add entry to Approval Details");
+		}
+	}
 }
