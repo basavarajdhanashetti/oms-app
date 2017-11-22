@@ -3,6 +3,7 @@ package com.bsd.oms.entity;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,8 +24,11 @@ public class Report {
 	
 	private String name;
 	
+	@Column(name="id_view")
+	private long idView;
+	
 	@ManyToOne
-	@JoinColumn(name="id_view")
+	@JoinColumn(name="id_view", updatable=false, insertable=false)
 	private ReportView view;
 	
 	private String userId;
@@ -118,8 +122,16 @@ public class Report {
 		this.view = view;
 	}
 
+	public long getIdView() {
+		return idView;
+	}
+
+	public void setIdView(long idView) {
+		this.idView = idView;
+	}
+
 	public enum ChartType {
-		BarChart, AreaChart;
+		BarChart, AreaChart, DonutChart;
 		
 		public String toString(){
 			return this.name();

@@ -27,13 +27,27 @@ public class OMSDateUtil {
 		}
 		return new Date();
 	}
+	
+	/**
+	 * 
+	 * @param strDate
+	 * @return
+	 */
+	public static Date toDateTime(String strDate) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(strDate);
+		} catch (ParseException e) {
+			
+		}
+		return new Date();
+	}
 
 	/**
 	 * 
 	 * @param time
 	 * @return
 	 */
-	public static Object getDBDateTime(Date time) {
+	public static String getDBDateTime(Date time) {
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
 	}
 

@@ -2,9 +2,10 @@
 
 //load categories 
 function loadCategories(categoryEleId) {
+	var baseUrl = document.location.origin;
 	$.ajax({
 		type : "GET",
-		url : "categories",
+		url : baseUrl+"/api/categories",
 		headers : {
 			'Accept' : 'application/json'
 		},
@@ -19,16 +20,19 @@ function loadCategories(categoryEleId) {
 				$(categoryEleId).append(newOption);
 
 			});
-		}
+		}, error: function(xhr){
+            alert("An error occured: " + xhr.status + " " + xhr.statusText);
+        }
 	});
 };
 
 //load sub categories based on category id
 $("#Category-id").change(function() {
 	var categoryId = $("#Category-id").val();
+	var baseUrl = document.location.origin;
 	$.ajax({
 		type : "GET",
-		url : "categories/"+ categoryId + "/subcategories",
+		url : baseUrl+"/api/categories/"+ categoryId + "/subcategories",
 		headers : {
 			'Accept' : 'application/json'
 		},
@@ -43,7 +47,9 @@ $("#Category-id").change(function() {
 				$('#SubCategory-id').append(newOption);
 
 			});
-		}
+		}, error: function(xhr){
+            alert("An error occured: " + xhr.status + " " + xhr.statusText);
+        }
 	});
 });
 
@@ -52,9 +58,10 @@ $("#Category-id").change(function() {
 $("#SubCategory-id").change(function() {
 	var categoryId = $('#Category-id').val();
 	var subCategoryId = $('#SubCategory-id').val();
+	var baseUrl = document.location.origin;
 	$.ajax({
 		type : "GET",
-		url : "categories/"+ categoryId + "/subcategories/"+subCategoryId+"/products" ,
+		url : baseUrl+"/api/categories/"+ categoryId + "/subcategories/"+subCategoryId+"/products" ,
 		headers : {
 			'Accept' : 'application/json'
 		},
@@ -69,6 +76,8 @@ $("#SubCategory-id").change(function() {
 				$('#Product-id').append(newOption);
 
 			});
-		}
+		}, error: function(xhr){
+            alert("An error occured: " + xhr.status + " " + xhr.statusText);
+        }
 	});
 });

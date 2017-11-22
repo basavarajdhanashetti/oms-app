@@ -1,11 +1,15 @@
+com/bsd/oms/entity/rest/StockRegisterService.class
 com/bsd/oms/entity/rest/ReportService.class
 com/bsd/oms/entity/rest/DepartmentService.class
 com/bsd/oms/entity/rest/ReportViewService.class
+com/bsd/oms/entity/rest/StoreInwardRegisterService.class
 com/bsd/oms/entity/rest/AddressService.class
 com/bsd/oms/entity/rest/CustomerService.class
 com/bsd/oms/entity/rest/ShipmentService.class
 com/bsd/oms/OMSRestAppMain.class
+com/bsd/oms/entity/rest/AssetRequestService.class
 com/bsd/oms/entity/rest/QuotationService.class
+com/bsd/oms/entity/rest/PurchaseOrderService.class
 com/bsd/oms/PropertyConfig.class
 com/bsd/oms/entity/rest/PurchaseRequestService.class
 com/bsd/oms/service/rest/ProcurementService.class

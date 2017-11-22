@@ -10,11 +10,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="purchase_orders")
+@NamedQueries({ @NamedQuery(name = "PurchaseOrder.getAllBetweenDates", query = "SELECT po FROM PurchaseOrder po where po.poDate between :fromDate and :toDate ")
+	})
 public class PurchaseOrder {
 
 	@Id

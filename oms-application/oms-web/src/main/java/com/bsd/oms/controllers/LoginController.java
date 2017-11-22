@@ -49,6 +49,15 @@ public class LoginController {
 		}
 	} 
 	
+	@GetMapping(path="/home")
+	public String homePage(@Valid @ModelAttribute(value="loginForm") LoginDetails login, BindingResult result, Model model, HttpSession session){
+		User user = (User) session.getAttribute("Session_UserDetails");
+		if (user == null) {
+			return "redirect:/logout";
+		}
+		return "index";
+	} 
+	
 	/**
 	 * 
 	 * @param login

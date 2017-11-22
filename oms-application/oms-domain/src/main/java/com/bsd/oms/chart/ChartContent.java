@@ -3,9 +3,11 @@ package com.bsd.oms.chart;
 import java.util.List;
 import java.util.Map;
 
-public class Bar {
+public class ChartContent {
 
 	private List<Map<String, Object>> data;
+	
+	private List<LabelValue> labelValues;
 	
 	private String xKey;
 	
@@ -43,6 +45,14 @@ public class Bar {
 
 	public void setLabels(List<String> labels) {
 		this.labels = labels;
+	}
+
+	public List<LabelValue> getLabelValues() {
+		return labelValues;
+	}
+
+	public void setLabelValues(List<LabelValue> labelValues) {
+		this.labelValues = labelValues;
 	}
 	
 }

@@ -6,7 +6,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Office Partner</a>
+                <a class="navbar-brand" href="/home">Office Partner</a>
             </div>
             <!-- /.navbar-header -->
 

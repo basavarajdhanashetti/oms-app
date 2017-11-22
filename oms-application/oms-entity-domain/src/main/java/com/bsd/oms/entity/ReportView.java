@@ -19,6 +19,8 @@ public class ReportView {
 	
 	private String name;
 	
+	private String displayName;
+	
 	private String role;
 	
 	@OneToMany(mappedBy="idReportView")
@@ -54,6 +56,14 @@ public class ReportView {
 
 	public void setViewColumns(List<ReportViewColumn> viewColumns) {
 		this.viewColumns = viewColumns;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 	
 }

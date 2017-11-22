@@ -32,11 +32,10 @@
 	<!-- Custom Theme JavaScript -->
 	<script src="${pageContext.request.contextPath}/dist/js/sb-admin-2.js"></script>
 
-	<!--Project custom JavaScript -->
-	<script src="${pageContext.request.contextPath}/oms/oms-rest-client.js"></script>
-
 	<!-- Datepicker related JavaScript -->
 	<script src="${pageContext.request.contextPath}/datepicker/js/bootstrap-datepicker.js"></script>
+	
+	 <script src="${pageContext.request.contextPath}/vendor/datatables/js/jquery.dataTables.min.js"></script>
 
 	<script type="text/javascript">
 		$(function() {
@@ -47,6 +46,12 @@
 				todayHighlight : true
 			});
 		});
+		
+		$(document).ready(function() {
+			$('#dataTables-example').DataTable({
+				responsive : true
+			});
+		});
 	</script>
 	
 
@@ -54,6 +59,6 @@
     <!-- Morris Charts JavaScript -->
     <script src="${pageContext.request.contextPath}/vendor/raphael/raphael.min.js"></script>
     <script src="${pageContext.request.contextPath}/vendor/morrisjs/morris.min.js"></script>
-    <script src="${pageContext.request.contextPath}/data/morris-data.js"></script>
-    <script src="${pageContext.request.contextPath}/data/my-reports.js"></script>
+   <%--  <script src="${pageContext.request.contextPath}/data/morris-data.js"></script> --%>
+    
 

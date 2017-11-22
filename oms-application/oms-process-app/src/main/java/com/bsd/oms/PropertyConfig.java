@@ -20,6 +20,12 @@ public class PropertyConfig {
 
 	@Value("${jbpms.procurement-pr-process}")
 	private String purchaseRequestProcessId;
+	
+	@Value("${jbpms.store-inward-process}")
+	private String storeInwardProcessId;
+	
+	@Value("${jbpms.asset-assign-process}")
+	private String assetAssignProcessId;
 
 	public String getBpmServerUrl() {
 		return bpmServerUrl;
@@ -39,6 +45,18 @@ public class PropertyConfig {
 
 	public String getProcurementContainer() {
 		return procurementContainer;
+	}
+
+	public String getStoreInwardProcessId() {
+		return storeInwardProcessId;
+	}
+
+	public String getAssetAssignProcessId() {
+		return assetAssignProcessId;
+	}
+
+	public void setAssetAssignProcessId(String assetAssignProcessId) {
+		this.assetAssignProcessId = assetAssignProcessId;
 	}
 
 }

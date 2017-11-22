@@ -1,5 +1,6 @@
 package com.bsd.oms.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -20,8 +21,11 @@ public class ReportMatrics {
 	
 	private long idReport;
 	
+	@Column(name = "matric")
+	private long idMatric;
+	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="matric")
+	@JoinColumn(name="matric", insertable= false, updatable=false)
 	private ReportViewColumn matric;
 	
 	@Enumerated(EnumType.STRING)
@@ -71,6 +75,17 @@ public class ReportMatrics {
 
 	public void setOperation(OperationType operation) {
 		this.operation = operation;
+	}
+
+
+	public long getIdMatric() {
+		return idMatric;
+	}
+
+
+
+	public void setIdMatric(long idMatric) {
+		this.idMatric = idMatric;
 	}
 
 

@@ -16,7 +16,10 @@ public enum TaskEnum {
 	QuotationSelection("Quotation Selection"),
 	AmendQuotation("Amend Quotation"),
 	QuotationApproval("Quotation Approval"),
-	PurchaseOrderApproval("Purchase Order Approval");
+	PurchaseOrderApproval("Purchase Order Approval"),
+	InwardMaterials("Inward Materials"),
+	InwardMaterialsApproval("Inward Materials Approval"),
+	StockRegistration("Stock Registration");
 
     private final String taskName;
 

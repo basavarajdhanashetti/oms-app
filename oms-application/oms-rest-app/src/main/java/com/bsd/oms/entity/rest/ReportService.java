@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.bsd.oms.chart.Bar;
+import com.bsd.oms.chart.ChartContent;
 import com.bsd.oms.entity.Report;
+import com.bsd.oms.entity.Report.ChartType;
 import com.bsd.oms.entity.Report.Duration;
 import com.bsd.oms.entity.ReportMatrics;
-import com.bsd.oms.entity.ReportView;
 import com.bsd.oms.repo.CustomQueryExecutor;
 import com.bsd.oms.repo.ReportMatricsRepository;
 import com.bsd.oms.repo.ReportRepository;
@@ -54,25 +54,9 @@ public class ReportService {
 	 * @param report
 	 * @return
 	 */
-	@PostMapping(path = "/users/{userId}/reports", consumes = "application/json")
-	public ResponseEntity<?> createReport(@RequestBody Report report, @PathVariable String userId) {
-		LOG.debug("Create new report with (" + report.toString() + " )");
-		System.out.println("Create new report with (" + report.toString() + " )");
-		report.setUserId(userId);
-		report = reportRepo.save(report);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(report.getId()).toUri();
-		return ResponseEntity.created(location).build();
-	}
-
-	/**
-	 * 
-	 * @param report
-	 * @return
-	 */
 	@GetMapping(path = "/users/{userId}/reports")
 	public ResponseEntity<List<Report>> getAllReport(@PathVariable String userId) {
 		LOG.debug("Get All report ");
-		System.out.println("Get All report ");
 		List<Report> lst = new ArrayList<Report>();
 		for (Report report : reportRepo.getByUserId(userId)) {
 			lst.add(report);
@@ -85,14 +69,43 @@ public class ReportService {
 	 * @param report
 	 * @return
 	 */
-	@PutMapping(path = "/reports/{reportId}", consumes = "application/json")
+	@PostMapping(path = "/users/{userId}/reports", consumes = "application/json")
+	public ResponseEntity<?> createReport(@RequestBody Report report, @PathVariable String userId) {
+		LOG.debug("Create new report with (" + report.toString() + " )");
+		report.setUserId(userId);
+
+		Report reporttmp = reportRepo.save(report);
+
+		for (ReportMatrics matrics : report.getMatrices()) {
+			matrics.setIdReport(reporttmp.getId());
+			reportMatricsRepo.save(matrics);
+		}
+
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(report.getId()).toUri();
+		return ResponseEntity.created(location).build();
+	}
+
+	/**
+	 * 
+	 * @param report
+	 * @return
+	 */
+	@PutMapping(path = "/users/{userId}/reports/{reportId}", consumes = "application/json")
 	public ResponseEntity<Report> updateReport(@PathVariable long reportId, @PathVariable String userId, @RequestBody Report report) {
 		LOG.debug("Update report with (" + report.toString() + " )");
 
 		report.setId(reportId);
 		report.setUserId(userId);
-		report = reportRepo.save(report);
-
+		Report reporttmp = reportRepo.save(report);
+		for (ReportMatrics matrics : report.getMatrices()) {
+			if (matrics.getIdReport() == 0) {
+				// try delete only for persisted entity.
+				reportMatricsRepo.delete(matrics.getId());
+			} else {
+				matrics.setIdReport(reporttmp.getId());
+				reportMatricsRepo.save(matrics);
+			}
+		}
 		return ResponseEntity.ok(report);
 	}
 
@@ -119,8 +132,16 @@ public class ReportService {
 	public ResponseEntity<?> deleteReport(@PathVariable long reportId) {
 		LOG.debug("delete report for id " + reportId);
 
-		reportRepo.delete(reportId);
+		Report report = reportRepo.findOne(reportId);
 
+		if (report != null) {
+
+			for (ReportMatrics matrics : report.getMatrices()) {
+				reportMatricsRepo.delete(matrics);
+			}
+
+			reportRepo.delete(reportId);
+		}
 		return ResponseEntity.noContent().build();
 	}
 
@@ -137,12 +158,38 @@ public class ReportService {
 
 	/**
 	 * 
+	 * @param reportView
+	 * @return
+	 */
+	@PostMapping(path = "/reports/{reportViewId}/metrics", consumes = "application/json")
+	public ResponseEntity<?> createReportMatrics(@PathVariable long reportViewId, @RequestBody ReportMatrics reportMatrics) {
+		LOG.debug("Create new createReportMatrics with (" + reportMatrics.toString() + " )");
+		reportMatrics.setIdReport(reportViewId);
+		reportMatrics = reportMatricsRepo.save(reportMatrics);
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(reportMatrics.getId()).toUri();
+		return ResponseEntity.created(location).build();
+	}
+
+	/**
+	 * 
+	 * @param report
+	 * @return
+	 */
+	@DeleteMapping(path = "/reports/{reportId}/matrics/{metricId}")
+	public ResponseEntity<?> deleteReportMatrics(@PathVariable long reportId, @PathVariable long metricId) {
+		LOG.debug("deleteReportMatrics :" + metricId);
+		reportMatricsRepo.delete(metricId);
+		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * 
 	 * @param report
 	 * @return
 	 * @throws SQLException
 	 */
 	@GetMapping(path = "/reports/{reportId}/content")
-	public ResponseEntity<Bar> getReportContent(@PathVariable long reportId) throws SQLException {
+	public ResponseEntity<ChartContent> getReportContent(@PathVariable long reportId) throws SQLException {
 		LOG.debug("Get All report matrics ");
 
 		Report report = reportRepo.findOne(reportId);
@@ -151,6 +198,34 @@ public class ReportService {
 
 		List<Map<String, Object>> result = queryExecutor.getResult(sqlQuery, report);
 
+		ChartContent chartContent = null;
+		if (report.getChartType() == ChartType.AreaChart || report.getChartType() == ChartType.BarChart) {
+			chartContent = getBarAndAreaContent(report, result);
+		} else if (report.getChartType() == ChartType.DonutChart) {
+			chartContent = getDonutContent(report, result);
+		}
+
+		return ResponseEntity.ok(chartContent);
+	}
+
+	/**
+	 * 
+	 * @param report
+	 * @param result
+	 * @return
+	 */
+	private ChartContent getDonutContent(Report report, List<Map<String, Object>> result) {
+		// TODO: populate content for Donut
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param report
+	 * @param result
+	 * @return
+	 */
+	private ChartContent getBarAndAreaContent(Report report, List<Map<String, Object>> result) {
 		List<String> yKeys = new ArrayList<String>();
 		List<String> labels = new ArrayList<String>();
 		List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
@@ -158,9 +233,9 @@ public class ReportService {
 		for (Map<String, Object> row : result) {
 
 			Map<String, Object> data = new HashMap<String, Object>();
-			
+
 			data.put(report.getXDimensionName().getColumnName(), row.get(report.getXDimensionName().getColumnName()));
-			
+
 			for (ReportMatrics matrics : report.getMatrices()) {
 				data.put(matrics.getMatric().getColumnName(), row.get(matrics.getMatric().getColumnName()));
 
@@ -172,13 +247,12 @@ public class ReportService {
 			dataList.add(data);
 		}
 
-		Bar bar = new Bar();
-		bar.setData(dataList);
-		bar.setLabels(labels);
-		bar.setxKey(report.getXDimensionName().getColumnName());
-		bar.setyKeys(yKeys);
-
-		return ResponseEntity.ok(bar);
+		ChartContent chartContent = new ChartContent();
+		chartContent.setData(dataList);
+		chartContent.setLabels(labels);
+		chartContent.setxKey(report.getXDimensionName().getColumnName());
+		chartContent.setyKeys(yKeys);
+		return chartContent;
 	}
 
 	/**
@@ -190,13 +264,10 @@ public class ReportService {
 
 		StringBuilder qry = new StringBuilder("select ");
 
-		ReportView rpView = report.getView();
-
-		if (report.getDuration() == Duration.MONTH || report.getDuration() == Duration.QUATER || report.getDuration() == Duration.HALFYEAR
-				|| report.getDuration() == Duration.YEAR) {
+		if (report.getDuration() == Duration.HALFYEAR || report.getDuration() == Duration.YEAR) {
 			qry.append(" month(").append(report.getXDimensionName().getColumnName()).append("),");
 		} else {
-			qry.append(" week(").append(report.getXDimensionName().getColumnName()).append("),");
+			qry.append(" day(").append(report.getXDimensionName().getColumnName()).append("),");
 		}
 
 		for (int i = 0; i < report.getMatrices().size();) {
@@ -227,11 +298,10 @@ public class ReportService {
 
 		addDateCriteria(report, qry);
 
-		if (report.getDuration() == Duration.MONTH || report.getDuration() == Duration.QUATER || report.getDuration() == Duration.HALFYEAR
-				|| report.getDuration() == Duration.YEAR) {
+		if (report.getDuration() == Duration.HALFYEAR || report.getDuration() == Duration.YEAR) {
 			qry.append("  group by  month(").append(report.getXDimensionName().getColumnName()).append(") ");
 		} else {
-			qry.append("  group by  week(").append(report.getXDimensionName().getColumnName()).append(") ");
+			qry.append("  group by  day(").append(report.getXDimensionName().getColumnName()).append(") ");
 		}
 		return qry.toString();
 	}

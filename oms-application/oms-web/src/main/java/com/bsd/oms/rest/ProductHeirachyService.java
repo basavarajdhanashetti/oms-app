@@ -18,7 +18,7 @@ import com.bsd.oms.entity.ProductCategory;
 import com.bsd.oms.entity.ProductSubCategory;
 
 @Controller
-@RequestMapping("/categories")
+@RequestMapping("/api/categories")
 public class ProductHeirachyService {
 
 	@Autowired

@@ -1,6 +1,8 @@
 package com.bsd.oms.entity.rest;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,22 +14,43 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.bsd.oms.entity.ReportView;
+import com.bsd.oms.entity.ReportViewColumn;
+import com.bsd.oms.repo.ReportViewColumnRepository;
 import com.bsd.oms.repo.ReportViewRepository;
 
-
-@RestController("/views")
+@RestController()
+@RequestMapping(path = "/reportviews")
 public class ReportViewService {
 
 	private static Logger LOG = LoggerFactory.getLogger(ReportViewService.class);
 
 	@Autowired
 	private ReportViewRepository reportViewRepo;
-	
+
+	@Autowired
+	private ReportViewColumnRepository reportViewColumnRepo;
+
+	/**
+	 * 
+	 * @param reportView
+	 * @return
+	 */
+	@GetMapping()
+	public ResponseEntity<List<ReportView>> getReportViews() {
+		LOG.debug("Get all reportView");
+
+		List<ReportView> lst = new ArrayList<ReportView>();
+		for (ReportView reportView : reportViewRepo.findAll()) {
+			lst.add(reportView);
+		}
+		return ResponseEntity.ok(lst);
+	}
+
 	/**
 	 * 
 	 * @param reportView
@@ -37,7 +60,13 @@ public class ReportViewService {
 	public ResponseEntity<?> createReport(@RequestBody ReportView reportView) {
 		LOG.debug("Create new reportView with (" + reportView.toString() + " )");
 		System.out.println("Create new reportView with (" + reportView.toString() + " )");
-		reportView = reportViewRepo.save(reportView);
+		ReportView reportViewTmp = reportViewRepo.save(reportView);
+
+		for (ReportViewColumn viewColumn : reportView.getViewColumns()) {
+			viewColumn.setIdReportView(reportViewTmp.getId());
+			reportViewColumnRepo.save(viewColumn);
+		}
+
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(reportView.getId()).toUri();
 		return ResponseEntity.created(location).build();
 	}
@@ -52,7 +81,16 @@ public class ReportViewService {
 		LOG.debug("Update reportView with (" + reportView.toString() + " )");
 
 		reportView.setId(reportViewId);
-		reportView = reportViewRepo.save(reportView);
+		ReportView reportViewTmp = reportViewRepo.save(reportView);
+
+		for (ReportViewColumn viewColumn : reportView.getViewColumns()) {
+			if (viewColumn.getIdReportView() == 0) {
+				reportViewColumnRepo.delete(viewColumn.getId());
+			} else {
+				viewColumn.setIdReportView(reportViewTmp.getId());
+				reportViewColumnRepo.save(viewColumn);
+			}
+		}
 
 		return ResponseEntity.ok(reportView);
 	}
@@ -70,20 +108,6 @@ public class ReportViewService {
 
 		return ResponseEntity.ok(reportView);
 	}
-	
-	/**
-	 * 
-	 * @param reportView
-	 * @return
-	 */
-	@GetMapping()
-	public ResponseEntity<ReportView> getReportViewByName(@RequestParam String viewName) {
-		LOG.debug("Get reportView for name " + viewName);
-
-		ReportView reportView = reportViewRepo.getByName(viewName);
-
-		return ResponseEntity.ok(reportView);
-	}
 
 	/**
 	 * 
@@ -98,6 +122,5 @@ public class ReportViewService {
 
 		return ResponseEntity.noContent().build();
 	}
-
 
 }

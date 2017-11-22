@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import com.bsd.oms.chart.Bar;
+import com.bsd.oms.chart.ChartContent;
 import com.bsd.oms.entity.Report;
 import com.bsd.oms.entity.User;
 
 
 @Controller
-@RequestMapping("/reports")
+@RequestMapping("/api/reports")
 public class ReportController {
 
 	@Autowired
@@ -38,6 +38,11 @@ public class ReportController {
 	public @ResponseBody ResponseEntity<?> getAllReports(HttpSession session){
 		
 		User user = (User) session.getAttribute("Session_UserDetails");
+		
+		if(user == null){
+			return ResponseEntity.status(500).build();
+		}
+		
 		ResponseEntity<Report[]> reportResp = restTemplate.getForEntity(
 				this.omsRestRootURL + "/users/"+user.getUserName()+"/reports", Report[].class);
 		
@@ -55,13 +60,11 @@ public class ReportController {
 	@GetMapping("/{id}")
 	public @ResponseBody ResponseEntity<?> getReport(@PathVariable long id, HttpSession session){
 		
-		//User user = (User) session.getAttribute("Session_UserDetails");
-		
-		ResponseEntity<Bar> reportResp = restTemplate.getForEntity(
-				this.omsRestRootURL + "/reports/" + id, Bar.class);
+		ResponseEntity<ChartContent> reportResp = restTemplate.getForEntity(
+				this.omsRestRootURL + "/reports/" + id +"/content", ChartContent.class);
 		
 		if (reportResp.getStatusCode() == HttpStatus.OK) {
-			return ResponseEntity.ok(Arrays.asList(reportResp.getBody()));
+			return ResponseEntity.ok(reportResp.getBody());
 		} else {
 			return ResponseEntity.status(500).build();
 		}

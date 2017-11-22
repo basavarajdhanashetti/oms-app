@@ -3,6 +3,8 @@ package com.bsd.oms.entity;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -19,8 +21,10 @@ public class ApprovalDetails {
 	
 	private Date createdDate;
 	
+	@Enumerated(EnumType.STRING)
 	private ApprovalStatusType status;
 	
+	@Enumerated(EnumType.STRING)
 	private MaterialType material;
 	
 	private String comments;
